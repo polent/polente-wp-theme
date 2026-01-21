@@ -1,0 +1,32 @@
+{
+  "name": "polente-de",
+  "version": "1.0.0",
+  "description": "A plain, fast, and accessible block theme for polente.de.",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run clean && npm run build:css && npm run zip",
+    "build:css": "postcss src/style.css --use cssnano -o src/style.min.css --no-map",
+    "watch": "postcss src/style.css --use cssnano -o src/style.min.css --no-map --watch",
+    "zip": "cd src && bestzip ../build/polente-de.zip *",
+    "clean": "if exist .\\build rmdir .\\build /s /q && mkdir .\\build"
+  },
+  "keywords": [
+    "wordpress",
+    "theme",
+    "block-theme"
+  ],
+  "author": "Holger Hellinger",
+  "license": "GPL-2.0-or-later",
+  "devDependencies": {
+    "@wordpress/browserslist-config": "^6.34.0",
+    "bestzip": "^2.2.1",
+    "copyfiles": "^2.4.1",
+    "cssnano": "^7.1.2",
+    "mkdirp": "^1.0.4",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1"
+  },
+  "browserslist": [
+    "extends @wordpress/browserslist-config"
+  ]
+}

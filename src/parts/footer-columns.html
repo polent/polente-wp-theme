@@ -1,0 +1,53 @@
+<!-- wp:group {"tagName":"footer","metadata":{"name":"Footer with Columns"},"layout":{"type":"constrained"},"style":{"spacing":{"padding":{"top":"var:preset|spacing|60","bottom":"var:preset|spacing|60"}}}} -->
+<footer class="wp-block-group" style="padding-top:var(--wp--preset--spacing--60);padding-bottom:var(--wp--preset--spacing--60)">
+    <!-- wp:columns -->
+    <div class="wp-block-columns">
+        <!-- wp:column -->
+        <div class="wp-block-column">
+            <!-- wp:heading {"level":3} -->
+            <h3 class="wp-block-heading">About</h3>
+            <!-- /wp:heading -->
+
+            <!-- wp:paragraph -->
+            <p>Your site description or about text goes here.</p>
+            <!-- /wp:paragraph -->
+        </div>
+        <!-- /wp:column -->
+
+        <!-- wp:column -->
+        <div class="wp-block-column">
+            <!-- wp:heading {"level":3} -->
+            <h3 class="wp-block-heading">Quick Links</h3>
+            <!-- /wp:heading -->
+
+            <!-- wp:navigation {"layout":{"type":"flex","orientation":"vertical"},"overlayMenu":"never","fontSize":"medium"} /-->
+        </div>
+        <!-- /wp:column -->
+
+        <!-- wp:column -->
+        <div class="wp-block-column">
+            <!-- wp:heading {"level":3} -->
+            <h3 class="wp-block-heading">Connect</h3>
+            <!-- /wp:heading -->
+
+            <!-- wp:social-links {"iconColor":"contrast","iconColorValue":"#1A1A2E","size":"has-normal-icon-size","className":"is-style-logos-only"} -->
+            <ul class="wp-block-social-links has-normal-icon-size has-icon-color is-style-logos-only">
+                <!-- wp:social-link {"url":"https://github.com/polent","service":"github"} /-->
+                <!-- wp:social-link {"url":"https://linkedin.com/in/holgerhellinger","service":"linkedin"} /-->
+                <!-- wp:social-link {"url":"https://hellinger.wtf/@holger","service":"mastodon"} /-->
+            </ul>
+            <!-- /wp:social-links -->
+        </div>
+        <!-- /wp:column -->
+    </div>
+    <!-- /wp:columns -->
+
+    <!-- wp:separator {"style":{"spacing":{"margin":{"top":"var:preset|spacing|50","bottom":"var:preset|spacing|30"}}}} -->
+    <hr class="wp-block-separator has-alpha-channel-opacity" style="margin-top:var(--wp--preset--spacing--50);margin-bottom:var(--wp--preset--spacing--30)"/>
+    <!-- /wp:separator -->
+
+    <!-- wp:paragraph {"align":"center","fontSize":"small"} -->
+    <p class="has-text-align-center has-small-font-size">© <!-- wp:site-title {"level":0} /-->. All rights reserved.</p>
+    <!-- /wp:paragraph -->
+</footer>
+<!-- /wp:group -->

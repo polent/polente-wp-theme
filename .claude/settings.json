@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.holger-hellinger.de)",
+      "WebFetch(domain:b.polente.de)",
+      "Bash(npm run:*)",
+      "Bash(node -e 'const j=JSON.parse\\(require\\('\\\\''fs'\\\\''\\).readFileSync\\('\\\\''src/theme.json'\\\\'','\\\\''utf8'\\\\''\\)\\); console.log\\('\\\\''JSON valid. Version:'\\\\'', j.version\\); console.log\\('\\\\''Schema:'\\\\'', j.$schema\\); console.log\\('\\\\''Colors:'\\\\'', j.settings.color.palette.length\\); console.log\\('\\\\''Font families:'\\\\'', j.settings.typography.fontFamilies.length\\); console.log\\('\\\\''Font sizes:'\\\\'', j.settings.typography.fontSizes.length\\); console.log\\('\\\\''Shadows:'\\\\'', j.settings.shadow.presets.length\\); console.log\\('\\\\''Spacing sizes:'\\\\'', j.settings.spacing.spacingSizes.length\\); console.log\\('\\\\''Template parts:'\\\\'', j.templateParts.length\\); console.log\\('\\\\''Custom templates:'\\\\'', j.customTemplates.length\\);')"
+    ]
+  }
+}
