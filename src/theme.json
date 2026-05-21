@@ -1,5 +1,5 @@
 {
-	"$schema": "https://schemas.wp.org/wp/6.9/theme.json",
+	"$schema": "https://schemas.wp.org/wp/7.0/theme.json",
 	"version": 3,
 	"settings": {
 		"appearanceTools": true,
@@ -140,6 +140,7 @@
 		},
 		"typography": {
 			"writingMode": true,
+			"textIndent": true,
 			"defaultFontSizes": false,
 			"fluid": true,
 			"fontFamilies": [
@@ -608,6 +609,35 @@
 			},
 			"core/list": {
 				"css": "& li{margin-top: 0.5rem;}"
+			},
+			"core/breadcrumbs": {
+				"typography": {
+					"fontSize": "var:preset|font-size|small"
+				},
+				"color": {
+					"text": "var:preset|color|accent-4"
+				},
+				"elements": {
+					"link": {
+						"color": {
+							"text": "var:preset|color|accent-4"
+						},
+						"typography": {
+							"textDecoration": "none"
+						},
+						":hover": {
+							"typography": {
+								"textDecoration": "underline"
+							}
+						}
+					}
+				},
+				"spacing": {
+					"margin": {
+						"top": "var:preset|spacing|30",
+						"bottom": "var:preset|spacing|30"
+					}
+				}
 			}
 		},
 		"elements": {
@@ -749,6 +779,11 @@
 			"area": "uncategorized",
 			"name": "sidebar",
 			"title": "Sidebar"
+		},
+		{
+			"area": "navigation-overlay",
+			"name": "navigation-overlay",
+			"title": "Navigation Overlay"
 		}
 	],
 	"customTemplates": [

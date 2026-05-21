@@ -4,7 +4,7 @@ A plain, fast, and accessible block theme for polente.de.
 
 ## Description
 
-This is a modern block theme developed for WordPress 6.9 and later. It's designed to be lightweight, accessible, and fully responsive without relying on JavaScript.
+This is a modern block theme developed for WordPress 7.0 and later (tested up to 7.0, requires 6.7+). It's designed to be lightweight, accessible, and fully responsive without relying on JavaScript.
 
 ## Features
 
@@ -12,6 +12,13 @@ This is a modern block theme developed for WordPress 6.9 and later. It's designe
 * Accessible and responsive design.
 * No JavaScript for a fast user experience.
 * Basic templates for posts, pages, and archives.
+
+## WordPress 7.0 Support
+
+* `theme.json` schema bumped to `wp/7.0`.
+* Customizable mobile menu via the new `navigation-overlay` template part, pre-wired into every header.
+* `textIndent` typography setting enabled, so editors can opt paragraphs into the new WP 7.0 text-indent control.
+* Styling and a localised `Home` label for the new core Breadcrumbs block, with an `aria-label="Breadcrumb"` landmark applied via `render_block_core/breadcrumbs`.
 
 ## Accessibility
 

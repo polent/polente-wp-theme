@@ -383,3 +383,73 @@ function polentede_social_links_aria_label( $block_content, $block ) {
 	);
 }
 add_filter( 'render_block_core/social-links', 'polentede_social_links_aria_label', 10, 2 );
+
+/**
+ * Provide an aria-label for the WP 7.0 Breadcrumbs block landmark.
+ */
+function polentede_breadcrumbs_aria_label( $block_content ) {
+	if ( false === stripos( $block_content, '<nav' ) ) {
+		return $block_content;
+	}
+	if ( false !== stripos( $block_content, 'aria-label=' ) ) {
+		return $block_content;
+	}
+	return preg_replace(
+		'/<nav\b/',
+		'<nav aria-label="' . esc_attr__( 'Breadcrumb', 'polentede' ) . '"',
+		$block_content,
+		1
+	);
+}
+add_filter( 'render_block_core/breadcrumbs', 'polentede_breadcrumbs_aria_label', 10, 1 );
+
+/**
+ * Inject the queried author's biography into the author archive template.
+ *
+ * The author template ships an empty paragraph with the `polentede-author-bio`
+ * class. On author archives we fill it with the user's description; on any
+ * other context the paragraph is removed so it doesn't render an empty block.
+ */
+function polentede_author_bio_content( $block_content, $block ) {
+	$attrs = isset( $block['attrs'] ) ? $block['attrs'] : array();
+	$class = isset( $attrs['className'] ) ? (string) $attrs['className'] : '';
+	if ( false === strpos( $class, 'polentede-author-bio' ) ) {
+		return $block_content;
+	}
+	if ( ! is_author() ) {
+		return '';
+	}
+	$author = get_queried_object();
+	if ( ! $author instanceof WP_User ) {
+		return '';
+	}
+	$bio = trim( (string) $author->description );
+	if ( '' === $bio ) {
+		return '';
+	}
+	return preg_replace(
+		'/(<p\b[^>]*>)(.*?)(<\/p>)/is',
+		'$1' . esc_html( $bio ) . '$3',
+		$block_content,
+		1
+	);
+}
+add_filter( 'render_block_core/paragraph', 'polentede_author_bio_content', 10, 2 );
+
+/**
+ * Localize the "Home" crumb in the WP 7.0 Breadcrumbs block so it follows the
+ * site's text-domain translations rather than the block's built-in label.
+ */
+function polentede_breadcrumbs_items( $items ) {
+	if ( empty( $items ) || ! is_array( $items ) ) {
+		return $items;
+	}
+	$home = home_url( '/' );
+	foreach ( $items as &$item ) {
+		if ( ! empty( $item['url'] ) && untrailingslashit( $item['url'] ) === untrailingslashit( $home ) ) {
+			$item['label'] = __( 'Home', 'polentede' );
+		}
+	}
+	return $items;
+}
+add_filter( 'block_core_breadcrumbs_items', 'polentede_breadcrumbs_items' );
