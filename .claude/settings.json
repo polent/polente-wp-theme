@@ -9,7 +9,17 @@
       "WebFetch(domain:www.wpnews.io)",
       "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('src/theme.json','utf8'\\)\\); console.log\\('theme.json OK'\\)\")",
       "Bash(php -l src/functions.php)",
-      "Bash(unzip -l build/polente-de.zip)"
+      "Bash(unzip -l build/polente-de.zip)",
+      "Bash(php -r \"echo extension_loaded\\('gd'\\) ? 'GD ok' : 'GD missing';\")",
+      "Bash(command -v magick convert)",
+      "Bash(command -v rsvg-convert)",
+      "Bash(ls -lat /c/tmp/ 2>/dev/null | head -20; echo \"---\"; ls -lat /c/Users/holhelli/AppData/Local/Temp/ 2>/dev/null | grep -iE \"claude|paste|image|screenshot|\\\\.png|\\\\.jpg\" | head -10)",
+      "Read(//c/Users/holhelli/AppData/Local/Temp//**)",
+      "Bash(magick --version)",
+      "Bash(cp /c/Users/holhelli/AppData/Local/Temp/b45c6a9f-8338-432d-b2d6-cf8cdbc0a980.tmp /c/Projekte/XE/polente-wp-theme/.screenshot-source.png && ls -la /c/Projekte/XE/polente-wp-theme/.screenshot-source.png)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\holhelli\\AppData\\Local\\Temp"
     ]
   }
 }
