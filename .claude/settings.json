@@ -16,7 +16,9 @@
       "Bash(ls -lat /c/tmp/ 2>/dev/null | head -20; echo \"---\"; ls -lat /c/Users/holhelli/AppData/Local/Temp/ 2>/dev/null | grep -iE \"claude|paste|image|screenshot|\\\\.png|\\\\.jpg\" | head -10)",
       "Read(//c/Users/holhelli/AppData/Local/Temp//**)",
       "Bash(magick --version)",
-      "Bash(cp /c/Users/holhelli/AppData/Local/Temp/b45c6a9f-8338-432d-b2d6-cf8cdbc0a980.tmp /c/Projekte/XE/polente-wp-theme/.screenshot-source.png && ls -la /c/Projekte/XE/polente-wp-theme/.screenshot-source.png)"
+      "Bash(cp /c/Users/holhelli/AppData/Local/Temp/b45c6a9f-8338-432d-b2d6-cf8cdbc0a980.tmp /c/Projekte/XE/polente-wp-theme/.screenshot-source.png && ls -la /c/Projekte/XE/polente-wp-theme/.screenshot-source.png)",
+      "WebFetch(domain:developer.wordpress.org)",
+      "WebFetch(domain:codex.wordpress.org)"
     ],
     "additionalDirectories": [
       "C:\\Users\\holhelli\\AppData\\Local\\Temp"

@@ -453,3 +453,39 @@ function polentede_breadcrumbs_items( $items ) {
 	return $items;
 }
 add_filter( 'block_core_breadcrumbs_items', 'polentede_breadcrumbs_items' );
+
+/**
+ * Re-enable the legacy Link Manager (hidden by core since WP 3.5) so the
+ * "Links" menu reappears in /wp-admin and stored bookmarks remain queryable.
+ */
+add_filter( 'pre_option_link_manager_enabled', '__return_true' );
+
+/**
+ * Render the Link Manager bookmarks via shortcode so they can be placed in
+ * block-theme template parts. Accepts the same args as wp_list_bookmarks().
+ *
+ * Usage: [blogroll] or [blogroll category_name="Friends" categorize="0"]
+ */
+function polentede_blogroll_shortcode( $atts ) {
+	$args = shortcode_atts(
+		array(
+			'categorize'    => 1,
+			'category'      => '',
+			'category_name' => '',
+			'orderby'       => 'name',
+			'order'         => 'ASC',
+			'limit'         => -1,
+			'title_li'      => '',
+			'title_before'  => '<h3 class="wp-block-heading">',
+			'title_after'   => '</h3>',
+			'class'         => 'polentede-blogroll',
+			'show_images'   => 0,
+			'show_description' => 0,
+		),
+		$atts,
+		'blogroll'
+	);
+	$args['echo'] = 0;
+	return wp_list_bookmarks( $args );
+}
+add_shortcode( 'blogroll', 'polentede_blogroll_shortcode' );
