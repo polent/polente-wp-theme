@@ -4,7 +4,7 @@ A plain, fast, and accessible block theme for polente.de.
 
 ## Description
 
-This is a modern block theme developed for WordPress 7.0 and later (tested up to 7.0, requires 6.7+). It's designed to be lightweight, accessible, and fully responsive without relying on JavaScript.
+This is a modern block theme developed for WordPress 7.0 and later (tested up to 7.1, requires 7.0+, PHP 8.3+). It's designed to be lightweight, accessible, and fully responsive without relying on JavaScript.
 
 ## Features
 
@@ -17,8 +17,18 @@ This is a modern block theme developed for WordPress 7.0 and later (tested up to
 
 * `theme.json` schema bumped to `wp/7.0`.
 * Customizable mobile menu via the new `navigation-overlay` template part, pre-wired into every header.
-* `textIndent` typography setting enabled, so editors can opt paragraphs into the new WP 7.0 text-indent control.
+* `textIndent` typography setting set to `subsequent`, so editors can opt paragraphs into the new WP 7.0 text-indent control.
 * Styling and a localised `Home` label for the new core Breadcrumbs block, with an `aria-label="Breadcrumb"` landmark applied via `render_block_core/breadcrumbs`.
+
+## Requirements and Security
+
+* WordPress 7.0 or later. Run core 7.1.2 or later. It fixes an unauthenticated LFI to RCE in page template resolution (CVE-2026-87902).
+* PHP 8.3 or later (WordPress recommended version). Linted on PHP 8.5.
+* `theme.json` validated against the `wp/7.1` schema.
+* JSON-LD output uses `JSON_HEX_TAG`, so no field can close the `<script>` element.
+* `og:url` is built from the parsed request path. Raw query strings are not reflected.
+* `[blogroll]` shortcode only accepts data attributes. Markup wrappers and classes are fixed.
+* Landmark aria-labels are set through the core HTML API (`WP_HTML_Tag_Processor`), not regex.
 
 ## Accessibility
 

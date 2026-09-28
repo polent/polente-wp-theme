@@ -7,6 +7,10 @@
  * @package Polente DE
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 if ( ! function_exists( 'polentede_setup' ) ) :
 	function polentede_setup() {
 		load_theme_textdomain( 'polentede', get_template_directory() . '/languages' );
@@ -129,7 +133,10 @@ function polentede_social_meta() {
 	$locale    = get_locale();
 	$type      = is_singular( 'post' ) ? 'article' : 'website';
 	$title     = wp_get_document_title();
-	$url       = is_singular() ? get_permalink() : home_url( add_query_arg( null, null ) );
+	// Build the URL from the parsed request path, not the raw REQUEST_URI, so
+	// arbitrary query strings are not reflected into og:url.
+	global $wp;
+	$url       = is_singular() ? get_permalink() : home_url( user_trailingslashit( $wp->request ?? '' ) );
 
 	$description = '';
 	if ( is_singular() ) {
@@ -210,8 +217,8 @@ function polentede_structured_data() {
 		),
 	);
 
-	if ( is_singular( 'post' ) ) {
-		$post   = get_queried_object();
+	$post = is_singular( 'post' ) ? get_queried_object() : null;
+	if ( $post instanceof WP_Post ) {
 		$author = get_userdata( (int) $post->post_author );
 
 		$article = array(
@@ -257,7 +264,9 @@ function polentede_structured_data() {
 		'@graph'   => $graph,
 	);
 
-	echo '<script type="application/ld+json">' . wp_json_encode( $payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>' . "\n";
+	// JSON_HEX_TAG escapes < and > so a "</script>" in any field cannot break
+	// out of the script element (JSON_UNESCAPED_SLASHES alone would allow it).
+	echo '<script type="application/ld+json">' . wp_json_encode( $payload, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . '</script>' . "\n";
 }
 add_action( 'wp_head', 'polentede_structured_data', 5 );
 
@@ -287,26 +296,33 @@ function polentede_extra_canonical() {
 add_action( 'wp_head', 'polentede_extra_canonical', 3 );
 
 /**
+ * Add an aria-label (plus optional extra attributes) to the first $tag in a
+ * block's markup, unless that element already has one.
+ *
+ * Uses the core HTML API so attribute values are escaped for us and only the
+ * target element is inspected, not labels on nested buttons or links.
+ */
+function polentede_add_aria_label( $block_content, $tag, $label, $extra = array() ) {
+	$block_content = (string) $block_content;
+	$processor     = new WP_HTML_Tag_Processor( $block_content );
+	if ( ! $processor->next_tag( $tag ) || null !== $processor->get_attribute( 'aria-label' ) ) {
+		return $block_content;
+	}
+	$processor->set_attribute( 'aria-label', $label );
+	foreach ( $extra as $name => $value ) {
+		$processor->set_attribute( $name, $value );
+	}
+	return $processor->get_updated_html();
+}
+
+/**
  * Add a meaningful aria-label to navigation blocks for screen-reader users.
  */
 function polentede_navigation_aria_label( $block_content, $block ) {
-	if ( false === stripos( $block_content, '<nav' ) ) {
-		return $block_content;
-	}
-	if ( false !== stripos( $block_content, 'aria-label=' ) ) {
-		return $block_content;
-	}
-
 	$label = ! empty( $block['attrs']['ariaLabel'] )
-		? $block['attrs']['ariaLabel']
+		? (string) $block['attrs']['ariaLabel']
 		: __( 'Site navigation', 'polentede' );
-
-	return preg_replace(
-		'/<nav\b/',
-		'<nav aria-label="' . esc_attr( $label ) . '"',
-		$block_content,
-		1
-	);
+	return polentede_add_aria_label( $block_content, 'nav', $label );
 }
 add_filter( 'render_block_core/navigation', 'polentede_navigation_aria_label', 10, 2 );
 
@@ -314,39 +330,17 @@ add_filter( 'render_block_core/navigation', 'polentede_navigation_aria_label', 1
  * Provide an aria-label for the comments pagination region.
  */
 function polentede_comments_pagination_aria_label( $block_content ) {
-	if ( false === stripos( $block_content, '<nav' ) ) {
-		return $block_content;
-	}
-	if ( false !== stripos( $block_content, 'aria-label=' ) ) {
-		return $block_content;
-	}
-	return preg_replace(
-		'/<nav\b/',
-		'<nav aria-label="' . esc_attr__( 'Comments pagination', 'polentede' ) . '"',
-		$block_content,
-		1
-	);
+	return polentede_add_aria_label( $block_content, 'nav', __( 'Comments pagination', 'polentede' ) );
 }
-add_filter( 'render_block_core/comments-pagination', 'polentede_comments_pagination_aria_label', 10, 1 );
+add_filter( 'render_block_core/comments-pagination', 'polentede_comments_pagination_aria_label' );
 
 /**
  * Provide an aria-label for the query (post list) pagination region.
  */
 function polentede_query_pagination_aria_label( $block_content ) {
-	if ( false === stripos( $block_content, '<nav' ) ) {
-		return $block_content;
-	}
-	if ( false !== stripos( $block_content, 'aria-label=' ) ) {
-		return $block_content;
-	}
-	return preg_replace(
-		'/<nav\b/',
-		'<nav aria-label="' . esc_attr__( 'Posts pagination', 'polentede' ) . '"',
-		$block_content,
-		1
-	);
+	return polentede_add_aria_label( $block_content, 'nav', __( 'Posts pagination', 'polentede' ) );
 }
-add_filter( 'render_block_core/query-pagination', 'polentede_query_pagination_aria_label', 10, 1 );
+add_filter( 'render_block_core/query-pagination', 'polentede_query_pagination_aria_label' );
 
 /**
  * Force decoding="async" and add a sensible default loading attribute on
@@ -368,40 +362,23 @@ add_filter( 'wp_get_attachment_image_attributes', 'polentede_image_attributes' )
 /**
  * Ensure a user-friendly aria-label on social link list.
  */
-function polentede_social_links_aria_label( $block_content, $block ) {
-	if ( false === stripos( $block_content, '<ul' ) ) {
-		return $block_content;
-	}
-	if ( false !== stripos( $block_content, 'aria-label=' ) ) {
-		return $block_content;
-	}
-	return preg_replace(
-		'/<ul\b/',
-		'<ul aria-label="' . esc_attr__( 'Social media links', 'polentede' ) . '" role="list"',
+function polentede_social_links_aria_label( $block_content ) {
+	return polentede_add_aria_label(
 		$block_content,
-		1
+		'ul',
+		__( 'Social media links', 'polentede' ),
+		array( 'role' => 'list' )
 	);
 }
-add_filter( 'render_block_core/social-links', 'polentede_social_links_aria_label', 10, 2 );
+add_filter( 'render_block_core/social-links', 'polentede_social_links_aria_label' );
 
 /**
  * Provide an aria-label for the WP 7.0 Breadcrumbs block landmark.
  */
 function polentede_breadcrumbs_aria_label( $block_content ) {
-	if ( false === stripos( $block_content, '<nav' ) ) {
-		return $block_content;
-	}
-	if ( false !== stripos( $block_content, 'aria-label=' ) ) {
-		return $block_content;
-	}
-	return preg_replace(
-		'/<nav\b/',
-		'<nav aria-label="' . esc_attr__( 'Breadcrumb', 'polentede' ) . '"',
-		$block_content,
-		1
-	);
+	return polentede_add_aria_label( $block_content, 'nav', __( 'Breadcrumb', 'polentede' ) );
 }
-add_filter( 'render_block_core/breadcrumbs', 'polentede_breadcrumbs_aria_label', 10, 1 );
+add_filter( 'render_block_core/breadcrumbs', 'polentede_breadcrumbs_aria_label' );
 
 /**
  * Inject the queried author's biography into the author archive template.
@@ -411,9 +388,8 @@ add_filter( 'render_block_core/breadcrumbs', 'polentede_breadcrumbs_aria_label',
  * other context the paragraph is removed so it doesn't render an empty block.
  */
 function polentede_author_bio_content( $block_content, $block ) {
-	$attrs = isset( $block['attrs'] ) ? $block['attrs'] : array();
-	$class = isset( $attrs['className'] ) ? (string) $attrs['className'] : '';
-	if ( false === strpos( $class, 'polentede-author-bio' ) ) {
+	$class = (string) ( $block['attrs']['className'] ?? '' );
+	if ( ! str_contains( $class, 'polentede-author-bio' ) ) {
 		return $block_content;
 	}
 	if ( ! is_author() ) {
@@ -427,9 +403,10 @@ function polentede_author_bio_content( $block_content, $block ) {
 	if ( '' === $bio ) {
 		return '';
 	}
-	return preg_replace(
+	// Use a callback so "$1" or "\1" inside the bio is not read as a backreference.
+	return preg_replace_callback(
 		'/(<p\b[^>]*>)(.*?)(<\/p>)/is',
-		'$1' . esc_html( $bio ) . '$3',
+		static fn( $m ) => $m[1] . esc_html( $bio ) . $m[3],
 		$block_content,
 		1
 	);
@@ -467,25 +444,41 @@ add_filter( 'pre_option_link_manager_enabled', '__return_true' );
  * Usage: [blogroll] or [blogroll category_name="Friends" categorize="0"]
  */
 function polentede_blogroll_shortcode( $atts ) {
-	$args = shortcode_atts(
+	// Only data attributes come from the shortcode. Markup wrappers stay fixed
+	// so post authors cannot inject raw HTML through shortcode attributes.
+	$atts = shortcode_atts(
 		array(
-			'categorize'    => 1,
-			'category'      => '',
-			'category_name' => '',
-			'orderby'       => 'name',
-			'order'         => 'ASC',
-			'limit'         => -1,
-			'title_li'      => '',
-			'title_before'  => '<h3 class="wp-block-heading">',
-			'title_after'   => '</h3>',
-			'class'         => 'polentede-blogroll',
-			'show_images'   => 0,
+			'categorize'       => 1,
+			'category'         => '',
+			'category_name'    => '',
+			'orderby'          => 'name',
+			'order'            => 'ASC',
+			'limit'            => -1,
+			'show_images'      => 0,
 			'show_description' => 0,
 		),
 		$atts,
 		'blogroll'
 	);
-	$args['echo'] = 0;
-	return wp_list_bookmarks( $args );
+
+	$args = array(
+		'categorize'       => (int) (bool) $atts['categorize'],
+		'category'         => implode( ',', array_filter( wp_parse_id_list( $atts['category'] ) ) ),
+		'category_name'    => sanitize_text_field( $atts['category_name'] ),
+		'orderby'          => sanitize_key( $atts['orderby'] ),
+		'order'            => 'DESC' === strtoupper( (string) $atts['order'] ) ? 'DESC' : 'ASC',
+		// Cast to int: get_bookmarks() compares against -1 strictly, so the
+		// string "-1" from a shortcode would otherwise become LIMIT 1.
+		'limit'            => (int) $atts['limit'],
+		'show_images'      => (int) (bool) $atts['show_images'],
+		'show_description' => (int) (bool) $atts['show_description'],
+		'title_li'         => '',
+		'title_before'     => '<h3 class="wp-block-heading">',
+		'title_after'      => '</h3>',
+		'class'            => 'polentede-blogroll',
+		'echo'             => 0,
+	);
+
+	return (string) wp_list_bookmarks( $args );
 }
 add_shortcode( 'blogroll', 'polentede_blogroll_shortcode' );
