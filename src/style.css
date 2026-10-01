@@ -31,3 +31,31 @@ Tags: block-theme, accessibility-ready, custom-colors, custom-logo, custom-menu,
 	text-decoration: none;
 	border-radius: 4px;
 }
+
+/*
+ * Blockroll plugin: its meta row uses opacity .55 and font-size .7em, which
+ * fails text contrast and leaves the feed links far below the touch target size.
+ * The extra .blockroll-list class wins over the plugin's inline style regardless of load order.
+ */
+.wp-block-blockroll-blogroll .blockroll-list .h-card .blockroll-meta {
+	font-size: 0.875em;
+	opacity: 1;
+}
+
+.wp-block-blockroll-blogroll .blockroll-list .h-card .blockroll-feed {
+	gap: 0.5rem;
+}
+
+.wp-block-blockroll-blogroll .blockroll-list .h-card .blockroll-meta a {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	min-height: 44px;
+	text-decoration: underline;
+}
+
+.wp-block-blockroll-blogroll .blockroll-list .h-card .blockroll-feed-icon {
+	width: 1.25em;
+	height: 1.25em;
+}
