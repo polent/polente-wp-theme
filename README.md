@@ -4,14 +4,26 @@ A plain, fast, and accessible block theme for polente.de.
 
 ## Description
 
-This is a modern block theme developed for WordPress 7.0 and later (tested up to 7.1, requires 7.0+, PHP 8.3+). It's designed to be lightweight, accessible, and fully responsive without relying on JavaScript.
+This is a modern block theme developed for WordPress 7.0 and later (tested up to 7.1, requires 7.0+, PHP 8.3+). It's designed to be lightweight, accessible, and fully responsive. JavaScript is only used for the optional color mode toggle.
 
 ## Features
 
 * Block theme compatible with the full-site editor.
 * Accessible and responsive design.
-* No JavaScript for a fast user experience.
+* No JavaScript, except one small inline script for the color mode toggle.
 * Basic templates for posts, pages, and archives.
+* Light and dark mode. Follows the OS setting, with a toggle in every header.
+
+## Color Modes
+
+* The OS setting (`prefers-color-scheme`) is the default. This works without JavaScript.
+* The header toggle stores the choice in `localStorage` and sets `data-theme="light|dark"` on `<html>`.
+* Picking the mode that matches the OS clears the stored choice. The site follows the OS again.
+* The script runs inline at the top of `<head>`, so there is no flash of the wrong mode.
+* The toggle is a real `<button>` with `aria-pressed` and a "Dark mode" label. It stays hidden without JavaScript.
+* Dark values live in `src/color-modes.css`. They override the palette CSS variables only, so all blocks follow.
+* Loaded on the front end only. The editor keeps the light palette, so swatches match what you pick.
+* Palette colors changed in the Site Editor apply to light mode. Dark mode uses the values in `color-modes.css`.
 
 ## WordPress 7.0 Support
 

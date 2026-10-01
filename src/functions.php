@@ -59,8 +59,83 @@ function polentede_enqueue_styles() {
 		array(),
 		$theme_version
 	);
+	// Front end only. The editor keeps the light palette so swatches match.
+	wp_enqueue_style(
+		'polentede-color-modes',
+		get_template_directory_uri() . '/color-modes.min.css',
+		array( 'polentede-style' ),
+		$theme_version
+	);
 }
 add_action( 'wp_enqueue_scripts', 'polentede_enqueue_styles' );
+
+/**
+ * Light/dark mode switch.
+ *
+ * Printed inline at the top of <head> so a stored choice is applied before
+ * first paint (no flash). Without JS the OS preference still applies through
+ * CSS, and the toggle button stays hidden.
+ *
+ * Choosing the mode that matches the OS clears the stored value, so the site
+ * follows the OS again from then on.
+ */
+function polentede_color_mode_script() {
+	$script = <<<'JS'
+(function () {
+	var key = 'polentede-theme';
+	var root = document.documentElement;
+	var media = window.matchMedia('(prefers-color-scheme: dark)');
+
+	function read() {
+		try { return localStorage.getItem(key); } catch (e) { return null; }
+	}
+	function store(value) {
+		try {
+			if (value) { localStorage.setItem(key, value); } else { localStorage.removeItem(key); }
+		} catch (e) {}
+	}
+	function apply(value) {
+		if (value) { root.setAttribute('data-theme', value); } else { root.removeAttribute('data-theme'); }
+	}
+	function isDark() {
+		var value = root.getAttribute('data-theme');
+		return value ? value === 'dark' : media.matches;
+	}
+	function sync() {
+		var pressed = String(isDark());
+		document.querySelectorAll('.polentede-theme-toggle').forEach(function (button) {
+			button.hidden = false;
+			button.setAttribute('aria-pressed', pressed);
+		});
+	}
+
+	var stored = read();
+	if (stored === 'light' || stored === 'dark') {
+		apply(stored);
+	}
+
+	document.addEventListener('click', function (event) {
+		var button = event.target.closest && event.target.closest('.polentede-theme-toggle');
+		if (!button) {
+			return;
+		}
+		var next = isDark() ? 'light' : 'dark';
+		if ((next === 'dark') === media.matches) {
+			store(null);
+			apply(null);
+		} else {
+			store(next);
+			apply(next);
+		}
+		sync();
+	});
+	document.addEventListener('DOMContentLoaded', sync);
+	media.addEventListener('change', sync);
+})();
+JS;
+	wp_print_inline_script_tag( $script, array( 'id' => 'polentede-color-mode' ) );
+}
+add_action( 'wp_head', 'polentede_color_mode_script', 0 );
 
 /**
  * Enqueue editor styles so the block editor matches the front end.

@@ -8,7 +8,15 @@
     <div class="wp-block-group">
         <!-- wp:site-title /-->
 
-        <!-- wp:navigation {"ariaLabel":"Primary","overlay":"navigation-overlay","layout":{"type":"flex","setCascadingProperties":true,"justifyContent":"right"},"overlayMenu":"mobile","overlayBackgroundColor":"base","overlayTextColor":"contrast"} /-->
+        <!-- wp:group {"layout":{"type":"flex","flexWrap":"nowrap"}} -->
+        <div class="wp-block-group">
+            <!-- wp:navigation {"ariaLabel":"Primary","overlay":"navigation-overlay","layout":{"type":"flex","setCascadingProperties":true,"justifyContent":"right"},"overlayMenu":"mobile","overlayBackgroundColor":"base","overlayTextColor":"contrast"} /-->
+
+            <!-- wp:html -->
+            <button type="button" class="polentede-theme-toggle" aria-pressed="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3a9 9 0 0 1 0 18z"/></svg><span class="screen-reader-text">Dark mode</span></button>
+            <!-- /wp:html -->
+        </div>
+        <!-- /wp:group -->
     </div>
     <!-- /wp:group -->
 </header>

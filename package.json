@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "npm run clean && npm run build:css && npm run zip",
-    "build:css": "postcss src/style.css --use cssnano -o src/style.min.css --no-map",
-    "watch": "postcss src/style.css --use cssnano -o src/style.min.css --no-map --watch",
+    "build:css": "postcss src/style.css --use cssnano -o src/style.min.css --no-map && postcss src/color-modes.css --use cssnano -o src/color-modes.min.css --no-map",
+    "watch": "postcss src/style.css src/color-modes.css --use cssnano -d src --ext min.css --no-map --watch",
     "zip": "cd src && bestzip ../build/polente-de.zip *",
     "clean": "if exist .\\build rmdir .\\build /s /q && mkdir .\\build"
   },
