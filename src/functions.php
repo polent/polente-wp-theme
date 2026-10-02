@@ -456,6 +456,23 @@ function polentede_breadcrumbs_aria_label( $block_content ) {
 add_filter( 'render_block_core/breadcrumbs', 'polentede_breadcrumbs_aria_label' );
 
 /**
+ * Drop the tag cloud aria-label when the post count is shown.
+ *
+ * Core labels a link "1und1 (9 Einträge)" while the visible text is "1und1 (9)".
+ * The visible "(9)" is then missing from the accessible name, which fails
+ * WCAG 2.5.3 Label in Name. Without the label the name is the visible text.
+ */
+function polentede_tag_cloud_data( $tags_data ) {
+	foreach ( $tags_data as &$tag_data ) {
+		if ( ! empty( $tag_data['show_count'] ) ) {
+			$tag_data['aria_label'] = '';
+		}
+	}
+	return $tags_data;
+}
+add_filter( 'wp_generate_tag_cloud_data', 'polentede_tag_cloud_data' );
+
+/**
  * Inject the queried author's biography into the author archive template.
  *
  * The author template ships an empty paragraph with the `polentede-author-bio`
