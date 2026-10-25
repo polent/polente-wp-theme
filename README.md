@@ -35,7 +35,7 @@ This is a modern block theme developed for WordPress 7.0 and later (tested up to
 ## Requirements and Security
 
 * WordPress 7.0 or later. Run core 7.1.2 or later. It fixes an unauthenticated LFI to RCE in page template resolution (CVE-2026-87902).
-* PHP 8.3 or later (WordPress recommended version). Linted on PHP 8.5.
+* Minimum PHP version: 8.3 (WordPress recommended version). PHP 8.5 is the reference version for linting and static analysis.
 * `theme.json` validated against the `wp/7.1` schema.
 * JSON-LD output uses `JSON_HEX_TAG`, so no field can close the `<script>` element.
 * `og:url` is built from the parsed request path. Raw query strings are not reflected.

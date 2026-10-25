@@ -3,7 +3,7 @@
 ## Project
 
 - This repository contains a WordPress block theme. The installable theme files are in `src/`.
-- The theme targets WordPress 7.0+ and PHP 8.3+.
+- The theme targets WordPress 7.0+ and requires PHP 8.3+. Use PHP 8.5 as the reference version for linting and static analysis.
 - `src/style.css` and `src/color-modes.css` are the editable stylesheets. Their minified counterparts are generated and checked in.
 - `src/functions.php` contains the theme's PHP behavior. Preserve WordPress escaping, accessibility, and security practices when changing it.
 
