@@ -1,0 +1,8 @@
+{
+  "tools": {
+    "allowed": [
+      "run_shell_command(npm run build:css)",
+      "run_shell_command(php -l src/functions.php)"
+    ]
+  }
+}
